@@ -1,0 +1,84 @@
+version: '3.2'
+services:
+    adminer:
+        image: adminer:4.8.0-fastcgi
+        links:
+            - mysql
+        volumes:
+            - adminer:/var/www/html
+        environment:
+            - ADMINER_DEFAULT_SERVER=mysql
+            - ADMINER_DESIGN=nette
+    apache:
+        build:
+            context: docker/apache
+            args:
+                USER_ID: ${USER_ID:-0}
+                GROUP_ID: ${GROUP_ID:-0}
+        links:
+            - adminer
+            - php
+        ports:
+            - '80:80'
+            - '443:443'
+            - '90:90'
+            - '453:453'
+        sysctls:
+            - net.ipv4.ip_unprivileged_port_start=0
+        volumes:
+            - .:/app
+            - type: volume
+              source: adminer
+              target: /adminer
+              volume:
+                  nocopy: true
+    mail:
+        image: mailhog/mailhog
+        ports:
+            - '91:8025'
+    mysql:
+        image: mariadb:10.5.9-focal
+        ports:
+            - '33066:3306'
+        volumes:
+            - data:/var/lib/mysql
+        environment:
+            - MYSQL_DATABASE=invoice-test-app
+            - MYSQL_ROOT_PASSWORD=pass
+    php:
+        build:
+            context: docker/php
+            args:
+                USER_ID: ${USER_ID:-0}
+                GROUP_ID: ${GROUP_ID:-0}
+        links:
+            - mail
+            - mysql
+            - webpack
+        volumes:
+            - .:/app
+            - vendor:/app/vendor
+            - composer:/home/docker-container-user/.composer
+        environment:
+            - NETTE_DEBUG
+    webpack:
+        build:
+            context: docker/webpack
+            args:
+                USER_ID: ${USER_ID:-0}
+                GROUP_ID: ${GROUP_ID:-0}
+        ports:
+            - '3000:3000'
+        stdin_open: true
+        volumes:
+            - .:/app
+            - node_modules:/app/node_modules
+            - yarn:/home/docker-container-user/.cache/yarn
+volumes:
+    adminer:
+    composer:
+    data:
+    node_modules:
+    vendor:
+    yarn:
+
