@@ -1,0 +1,15 @@
+di:
+	export:
+		types:
+			- Nette\Application\IPresenterFactory
+
+
+session:
+	savePath: %tempDir%/sessions
+
+
+webpack:
+	devServer:
+		enabled: false
+	manifest:
+		name: null

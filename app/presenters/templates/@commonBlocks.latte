@@ -1,0 +1,7 @@
+{define formErrors, $form}
+	<p n:foreach="$form->getOwnErrors() as $error">{$error}</p>
+{/define}
+
+{define inputErrors, $input}
+	<p n:foreach="$input->getErrors() as $error">{$error}</p>
+{/define}

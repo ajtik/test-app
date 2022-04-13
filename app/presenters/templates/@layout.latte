@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+
+	<title>{ifset title}{include title|stripHtml} | {/ifset}Invoice Test App</title>
+
+	<link rel="stylesheet" href="{webpack main.css}">
+	{block head /}
+</head>
+
+<body>
+	<div class="container">
+		<nav class="navbar navbar-light bg-light mb-3">
+			<div class="container-fluid">
+				<a n:href=":Homepage:" class="navbar-brand">Domů</a>
+			</div>
+		</nav>
+		<div n:foreach="$flashes as $flash" class="alert alert-{$flash->type}" role="alert">
+			{$flash->message}
+		</div>
+
+		{include content}
+	</div>
+
+	<script src="{webpack runtime-main.js}"></script>
+	<script src="{webpack main.js}"></script>
+	{block scripts /}
+</body>
+</html>

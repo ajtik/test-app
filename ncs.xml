@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<ruleset>
+	<rule ref="$presets/php80.xml" />
+	<rule ref="$presets/clean-code.xml" />
+	<rule ref="$presets/types.xml" />
+
+	<rule ref="SlevomatCodingStandard.Functions.ArrowFunctionDeclaration">
+		<properties>
+			<property name="spacesCountAfterKeyword" value="1" />
+		</properties>
+	</rule>
+</ruleset>

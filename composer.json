@@ -1,0 +1,67 @@
+{
+	"name": "netvor/invoice-test-app",
+	"description": "Invoice Test App developed by Netvor for purpose of verifying the knowledge of a potential new team member.",
+	"type": "project",
+	"require": {
+		"php": ">= 8.0",
+		"ext-curl": "*",
+		"ext-filter": "*",
+		"ext-iconv": "*",
+		"ext-intl": "*",
+		"ext-json": "*",
+		"ext-mbstring": "*",
+		"ext-pdo_mysql": "*",
+		"ext-session": "*",
+		"ext-simplexml": "*",
+		"nette/application": "^3.1",
+		"nette/bootstrap": "^3.1",
+		"nette/caching": "^3.1",
+		"nette/di": "^3.0",
+		"nette/finder": "^2.5",
+		"nette/forms": "^3.1",
+		"nette/http": "^3.1",
+		"nette/mail": "^3.1",
+		"nette/robot-loader": "^3.4",
+		"nette/security": "^3.1",
+		"nette/utils": "^3.2",
+		"latte/latte": "^2.10",
+		"tracy/tracy": "^2.9",
+		"contributte/webpack": "^2.1",
+		"nettrine/orm": "^0.8.3"
+	},
+	"require-dev": {
+		"ext-dom": "*",
+		"ext-openssl": "*",
+		"ext-phar": "*",
+		"ext-zip": "*",
+		"ext-zlib": "*",
+		"contributte/console": "^0.9.1",
+		"mockery/mockery": "^1.5",
+		"nepada/phpstan-nette-tester": "^0.4.0",
+		"nette/coding-standard": "^3.2",
+		"nette/tester": "^2.4",
+		"phpstan/phpstan": "^1.4",
+		"phpstan/phpstan-doctrine": "^1.2",
+		"phpstan/phpstan-mockery": "^1.0",
+		"phpstan/phpstan-nette": "^1.0",
+		"phpstan/phpstan-strict-rules": "^1.1",
+		"nettrine/migrations": "^0.7.1"
+	},
+	"autoload": {
+		"psr-4": {
+			"Netvor\\Invoice\\": "app"
+		}
+	},
+	"minimum-stability": "stable",
+	"scripts": {
+		"check-cs": "ecs check app/ bin/ config/ migrations/ tests/ www/ --preset php80",
+		"fix-cs": "ecs check app/ bin/ config/ migrations/ tests/ www/ --preset php80 --fix",
+		"phpstan": "phpstan analyze -c tests/phpstan.neon",
+		"test": "tester tests/"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	}
+}

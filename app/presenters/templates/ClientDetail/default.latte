@@ -1,0 +1,46 @@
+{import ../@commonBlocks.latte}
+
+{varType Netvor\Invoice\Model\Entities\Client $client}
+{varType Netvor\Invoice\Model\Entities\Invoice[] $invoices}
+
+{block content}
+
+<h1 n:inner-block="title">Faktury klienta {$client->firstName} {$client->lastName} ({$client->ic})</h1>
+<hr>
+
+<h2>Nová faktura</h2>
+<div n:snippet="invoiceForm">
+	<form n:name="invoiceForm" class="ajax">
+		{include formErrors form => $form}
+		<div class="row g-3 mb-3">
+			<div class="col-auto">
+				<label n:name="amount" class="form-label">Částka</label>
+				<input n:name="amount" class="form-control">
+				{include inputErrors input => $form[amount]}
+			</div>
+			<div class="col-auto">
+				<label n:name="issueDate" class="form-label">Datum vystavení</label>
+				<input n:name="issueDate" class="form-control">
+				{include inputErrors input => $form[issueDate]}
+			</div>
+		</div>
+		<button n:name="submit" class="btn btn-primary">Přidat novou fakturu</button>
+	</form>
+</div>
+
+<hr>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Částka</th>
+			<th>Datum vystavení</th>
+		</tr>
+	</thead>
+	<tbody n:snippet="invoicesTable">
+		<tr n:foreach="$invoices as $invoice">
+			<td>{$invoice->amount|number:2, ',', ' '}&nbsp;Kč</td>
+			<td>{$invoice->issueDate|date:'j. n. Y'}</td>
+		</tr>
+	</tbody>
+</table>

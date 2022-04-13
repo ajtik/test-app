@@ -1,0 +1,6 @@
+extension_dir=C:\xampp\php\ext
+extension=intl
+extension=mbstring
+extension=openssl
+extension=pdo_mysql
+extension=sodium

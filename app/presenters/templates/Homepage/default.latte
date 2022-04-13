@@ -1,0 +1,81 @@
+{import ../@commonBlocks.latte}
+
+{varType Netvor\Invoice\Model\Entities\Client[] $clients}
+
+{block content}
+<h1>Seznam klientů</h1>
+<hr>
+
+<h2>Nový klient</h2>
+<div n:snippet="clientForm">
+	<form n:name="clientForm" class="ajax">
+		{include formErrors form => $form}
+		<div class="row g-3 mb-3">
+			<div class="col-auto">
+				<label n:name="ic" class="form-label">IČ</label>
+				<input n:name="ic" class="form-control">
+				{include inputErrors input => $form[ic]}
+			</div>
+			<div class="col-auto">
+				<label n:name="email" class="form-label">E-mail</label>
+				<input n:name="email" class="form-control">
+				{include inputErrors input => $form[email]}
+			</div>
+		</div>
+		<div class="row g-3 mb-3">
+			<div class="col-auto">
+				<label n:name="firstName" class="form-label">Jméno</label>
+				<input n:name="firstName" class="form-control">
+				{include inputErrors input => $form[firstName]}
+			</div>
+			<div class="col-auto">
+				<label n:name="lastName" class="form-label">Příjmení</label>
+				<input n:name="lastName" class="form-control">
+				{include inputErrors input => $form[lastName]}
+			</div>
+		</div>
+		<div class="row g-3 mb-3">
+			<div class="col-auto">
+				<label n:name="street" class="form-label">Ulice a číslo popisné</label>
+				<input n:name="street" class="form-control">
+				{include inputErrors input => $form[street]}
+			</div>
+			<div class="col-auto">
+				<label n:name="city" class="form-label">Město</label>
+				<input n:name="city" class="form-control">
+				{include inputErrors input => $form[city]}
+			</div>
+			<div class="col-auto">
+				<label n:name="postalCode" class="form-label">PSČ</label>
+				<input n:name="postalCode" class="form-control">
+				{include inputErrors input => $form[postalCode]}
+			</div>
+		</div>
+		<button n:name="submit" class="btn btn-primary">Přidat nového klienta</button>
+	</form>
+</div>
+
+<hr>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>IČ</th>
+			<th>E-mail</th>
+			<th>Jméno a příjmení</th>
+			<th>Adresa</th>
+			<th>Detail</th>
+		</tr>
+	</thead>
+	<tbody n:snippet="clientsTable">
+		<tr n:foreach="$clients as $client">
+			<td>{$client->ic}</td>
+			<td><a href="mailto:{$client->email}">{$client->email}</a></td>
+			<td>{$client->firstName} {$client->lastName}</td>
+			<td>{[$client->street, $client->city, $client->postalCode]|join:', '}</td>
+			<td>
+				<a n:href="ClientDetail: $client->id" class="btn btn-primary">Detail</a>
+			</td>
+		</tr>
+	</tbody>
+</table>

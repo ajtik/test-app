@@ -1,0 +1,52 @@
+{
+	"name": "invoice-test-app",
+	"version": "1.0.0-dev",
+	"private": true,
+	"description": "Invoice Test App developed by Netvor for purpose of verifying the knowledge of a potential new team member.",
+	"repository": "bitbucket:netvori/invoice-test-app",
+	"main": "frontend/index.js",
+	"dependencies": {
+		"@popperjs/core": "^2.9.2",
+		"bootstrap": "^5.0.2",
+		"naja": "^2.1.4",
+		"nette-forms": "^3.2.0",
+		"web-vitals": "^1.0.1"
+	},
+	"devDependencies": {
+		"@ntvr/stylelint-config-ntvr": "^1.1.0",
+		"@ntvr/stylelint-config-ntvr-order": "^1.0.0",
+		"@testing-library/dom": "^7.28.1",
+		"@testing-library/jest-dom": "^5.11.4",
+		"@testing-library/user-event": "^12.1.10",
+		"eslint": "^7.20.0",
+		"eslint-config-airbnb": "^18.2.1",
+		"eslint-plugin-import": "^2.22.1",
+		"eslint-plugin-jsx-a11y": "^6.4.1",
+		"eslint-plugin-react": "^7.22.0",
+		"eslint-plugin-react-hooks": "^4.2.0",
+		"react-scripts": "git+ssh://git@bitbucket.org/netvori/react-scripts.git#v4.0.2-netvor",
+		"sass": "^1.32.8",
+		"stylelint": "^13.11.0",
+		"stylelint-order": "^4.1.0"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test",
+		"eslint": "eslint --ext js,jsx frontend/",
+		"stylelint": "stylelint \"frontend/**/*.scss\" --config stylelint.config.js",
+		"eject": "react-scripts eject"
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	}
+}

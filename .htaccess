@@ -1,0 +1,16 @@
+<IfModule rewrite_module>
+	RewriteEngine On
+
+	# only non-www
+	RewriteCond $1 !^www/
+
+	# capture rewrite base
+	RewriteCond $1::%{REQUEST_URI} ^(.*)::(.*?)/\1$
+
+	# redirect to www
+	RewriteRule ^(.*)$ %2/www/$1 [L,R=301]
+</IfModule>
+
+<IfModule !rewrite_module>
+	Require all denied
+</IfModule>

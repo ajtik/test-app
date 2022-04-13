@@ -1,0 +1,30 @@
+parameters:
+
+
+mail:
+	smtp: true
+	host: smtp.mailtrap.io
+	port: 465
+	username: 0a7a63dff9f414
+	password: 4025fc35ee268c
+
+
+nettrine.dbal:
+	connection:
+		host: '$DATABASE_HOST'
+		port: '$DATABASE_PORT'
+		dbname: '$DATABASE_NAME'
+		user: '$DATABASE_USER'
+		password: '$DATABASE_PASSWORD'
+
+
+tracy:
+	email: $TRACY_EMAIL
+
+
+webpack:
+	devServer:
+		enabled: false
+
+
+services:

@@ -1,0 +1,74 @@
+parameters:
+	email:
+		templateDir: %appDir%/Mails/templates
+		from: 'invoice@netvor.co'
+
+
+extensions:
+	nettrine.annotations: Nettrine\Annotations\DI\AnnotationsExtension
+	nettrine.cache: Nettrine\Cache\DI\CacheExtension
+	nettrine.dbal: Nettrine\DBAL\DI\DbalExtension
+	nettrine.orm: Nettrine\ORM\DI\OrmExtension
+	nettrine.orm.annotations: Nettrine\ORM\DI\OrmAnnotationsExtension
+	nettrine.orm.cache: Nettrine\ORM\DI\OrmCacheExtension
+	webpack: Contributte\Webpack\DI\WebpackExtension(%debugMode%, %consoleMode%)
+
+
+application:
+	errorPresenter: Error
+	mapping:
+		*: Netvor\Invoice\*Module\Presenters\*Presenter
+
+
+di:
+	export:
+		parameters: no
+		tags: no
+		types:
+
+
+nettrine.dbal:
+	connection:
+		driver: pdo_mysql
+		host: 127.0.0.1
+		dbname: invoice-test-app
+		charset: utf8
+		user:
+		password:
+		defaultTableOptions:
+			charset: utf8mb4
+			collate: utf8mb4_unicode_ci
+	debug:
+		panel: %debugMode%
+
+
+nettrine.orm.annotations:
+	mapping:
+		Netvor\Invoice: %appDir%
+
+
+session:
+	autoStart: always
+	expiration: 14 days
+
+
+webpack:
+	build:
+		directory: %wwwDir%/build
+		publicPath: build
+	devServer:
+		url: http://127.0.0.1:3000/build
+		ignoredAssets:
+			- main.css
+	manifest:
+		name: asset-manifest.json
+
+
+services:
+	- Netvor\Invoice\Mails\MailService(templateDir: %email.templateDir%, defaultFromEmail: %email.from%)
+	- Netvor\Invoice\Model\ClientService
+	- Netvor\Invoice\Model\InvoiceService
+
+	- Netvor\Invoice\Router\RouterFactory::createRouter
+
+

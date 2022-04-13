@@ -1,0 +1,25 @@
+includes:
+	- dev-console.neon
+
+
+parameters:
+
+
+console:
+	url: http://127.0.0.1/
+
+
+nettrine.dbal:
+	connection:
+		host: mysql
+		user: root
+		password: pass
+
+
+webpack:
+	devServer:
+		url: http://webpack:3000/build
+		publicUrl: http://127.0.0.1:3000/build
+
+
+services:

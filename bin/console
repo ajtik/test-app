@@ -1,0 +1,12 @@
+#!/usr/bin/env php
+<?php
+declare(strict_types=1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+$exitCode = Netvor\Invoice\Bootstrap::boot()
+	->createContainer()
+	->getByType(Contributte\Console\Application::class)
+	->run();
+
+exit($exitCode > 255 ? 255 : $exitCode);

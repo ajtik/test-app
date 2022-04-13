@@ -1,0 +1,24 @@
+extensions:
+	console: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
+	nettrine.dbal.console: Nettrine\DBAL\DI\DbalConsoleExtension
+	nettrine.orm.console: Nettrine\ORM\DI\OrmConsoleExtension
+	nettrine.migrations: Nettrine\Migrations\DI\MigrationsExtension
+
+
+nettrine.migrations:
+	directory: %appDir%/../migrations
+	namespace: Netvor\Invoice\Migrations
+
+
+console:
+	name: Invoice Test App
+	version: %version.console%
+	url: https://invoice-dev.ntvr.co/
+	catchExceptions: %debugMode%
+	autoExit: false
+
+
+di:
+	export:
+		types:
+			- Contributte\Console\Application

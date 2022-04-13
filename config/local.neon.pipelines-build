@@ -1,0 +1,26 @@
+includes:
+	- dev-console.neon
+
+
+parameters:
+
+
+nettrine.dbal:
+	connection:
+		host: 127.0.0.1
+		port: '$DATABASE_PORT'
+		dbname: '$DATABASE_NAME'
+		user: '$DATABASE_USER'
+		password: '$DATABASE_PASSWORD'
+
+
+tracy:
+	email: $TRACY_EMAIL
+
+
+webpack:
+	devServer:
+		enabled: false
+
+
+services:

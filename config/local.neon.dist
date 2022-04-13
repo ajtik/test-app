@@ -1,0 +1,27 @@
+includes:
+	- dev-console.neon
+
+
+parameters:
+
+
+console:
+	url: http://127.0.0.1/invoice-test-app/www/
+
+
+http:
+	cookiePath: /invoice-test-app/www/
+
+
+nettrine.dbal:
+	connection:
+		user: user
+		password: password
+
+
+webpack:
+	devServer:
+		url: http://127.0.0.1:3000/invoice-test-app/www/build
+
+
+services:

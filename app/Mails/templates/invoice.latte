@@ -1,0 +1,9 @@
+{layout @layout.latte}
+
+{varType Netvor\Invoice\Model\Entities\Invoice $invoice}
+
+{block title}Nová faktura{/block}
+
+{block content}
+<p>Částka: {$invoice->amount|number:2, ',', ' '}&nbsp;Kč</p>
+<p>Datum vystavení: {$invoice->issueDate|date:'j. n. Y'}</p>
