@@ -1,5 +1,5 @@
 Invoice Test App
-========
+================
 
 Frontend part of this project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
@@ -49,28 +49,39 @@ Installation
 
 		yarn build
 
+Challenge
+---------
 
-Configuration
--------------
+### General instructions
 
-For PHP configuration options, see https://doc.nette.org/cs/3.1/configuring.
+- Clone this repository and install the project (see above).
+- Use `dump.sql` in directory `migrations` to populate the database with sample data.
+- Create a new branch, e. g. `feature/your-name`.
+- Implement the features (see below), commit as you work.
+- When you are done, push your branch and create a pull request to the `dev` branch. Pipelines should run successfully.
 
-You can adjust various development and production settings by setting environment variables in your shell or with [.env](adding-custom-environment-variables.md#adding-development-environment-variables-in-env).
+### Tasks
 
-> Note: You do not need to declare `REACT_APP_` before the below variables as you would with custom environment variables.
+1. Add a `dueDate` field (a date) to the `Invoice` entity.
+	- Create and run a new Doctrine migration to add the new column to the database.
+	- Add it to the invoice form and the invoice list as well.
 
-| Variable                | Development | Production | Usage                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| :---------------------- | :---------: | :--------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| BROWSER                 |   ✅ Used   | 🚫 Ignored | By default, Create React App will open the default system browser, favoring Chrome on macOS. Specify a [browser](https://github.com/sindresorhus/open#app) to override this behavior, or set it to `none` to disable it completely. If you need to customize the way the browser is launched, you can specify a node script instead. Any arguments passed to `npm start` will also be passed to this script, and the url where your app is served will be the last argument. Your script's file name must have the `.js` extension.                                                                                                                                      |
-| BROWSER_ARGS            |   ✅ Used   | 🚫 Ignored | When the `BROWSER` environment variable is specified, any arguments that you set to this environment variable will be passed to the browser instance. Multiple arguments are supported as a space separated list. By default, no arguments are passed through to browsers.                                                                                                                                                                                                                                                                                                                                                                                               |
-| HOST                    |   ✅ Used   | 🚫 Ignored | By default, the development web server binds to all hostnames on the device (`localhost`, LAN network address, etc.). You may use this variable to specify a different host.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| PUBLIC_HOST             |   ✅ Used   | 🚫 Ignored | By default, the development web server points to itself at `HOST` (see above). You may use this variable to specify a different host, e. g. when running it in the container.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| PORT                    |   ✅ Used   | 🚫 Ignored | By default, the development web server will attempt to listen on port 3000 or prompt you to attempt the next available port. You may use this variable to specify a different port.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| PUBLIC_ORIGIN           |   ✅ Used   | 🚫 Ignored | By default, the development web server assumes the backend is visible at any hostnames on the device (`localhost`, LAN network address, etc.) via `http` scheme at default port. You may use this variable to specify a different origin to fix CORS errors, e. g. when using virtual hosts or running the app in the container.                                                                                                                                                                                                                                                                                                                                         |
-| PUBLIC_URL              |   ✅ Used   |  ✅ Used   | Create React App assumes your application is hosted at the serving web server's root. You may use this variable to force assets to be referenced verbatim to the url you provide (hostname included).                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| GENERATE_SOURCEMAP      | 🚫 Ignored  |  ✅ Used   | When set to `false`, source maps are not generated for a production build. This solves out of memory (OOM) issues on some smaller machines.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+2. Create a new entity `Payment` (with an association to `Invoice`, one `Invoice` has many `Payments`). It should have
+`id`, `invoice`, `amount` and `createdAt` fields.
+	- Create and run a new Doctrine migration to add the new table to the database.
+	- Implement a new form for creating a payment. The invoice cannot be overpaid, i.e. the total amount of payments
+(including the new payment cannot be greater than the invoice amount).
 
-See https://create-react-app.dev/docs/advanced-configuration/ for more configuration options.
+3. Show the invoice payments:
+	- Add the total amount of payments for each invoice to the invoice list
+	- Create a list of unpaid (total amount of payments < invoice amount) overdue (dueDate < today) invoices
+
+### Optional tasks (do as many as you like)
+
+- Send the payment form via AJAX.
+- Import client information from ARES.
+- Send an e-mail to the client after the invoice is paid.
+- Theoretical question: How could you implement the user login and handle user permissions?
 
 
 Scripts
@@ -127,6 +138,29 @@ Scripts
 - Lint styles:
 
 		yarn stylelint
+
+
+Configuration
+-------------
+
+For PHP configuration options, see https://doc.nette.org/cs/3.1/configuring.
+
+You can adjust various development and production settings by setting environment variables in your shell or with [.env](adding-custom-environment-variables.md#adding-development-environment-variables-in-env).
+
+> Note: You do not need to declare `REACT_APP_` before the below variables as you would with custom environment variables.
+
+| Variable                | Development | Production | Usage                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| :---------------------- | :---------: | :--------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| BROWSER                 |   ✅ Used   | 🚫 Ignored | By default, Create React App will open the default system browser, favoring Chrome on macOS. Specify a [browser](https://github.com/sindresorhus/open#app) to override this behavior, or set it to `none` to disable it completely. If you need to customize the way the browser is launched, you can specify a node script instead. Any arguments passed to `npm start` will also be passed to this script, and the url where your app is served will be the last argument. Your script's file name must have the `.js` extension.                                                                                                                                      |
+| BROWSER_ARGS            |   ✅ Used   | 🚫 Ignored | When the `BROWSER` environment variable is specified, any arguments that you set to this environment variable will be passed to the browser instance. Multiple arguments are supported as a space separated list. By default, no arguments are passed through to browsers.                                                                                                                                                                                                                                                                                                                                                                                               |
+| HOST                    |   ✅ Used   | 🚫 Ignored | By default, the development web server binds to all hostnames on the device (`localhost`, LAN network address, etc.). You may use this variable to specify a different host.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| PUBLIC_HOST             |   ✅ Used   | 🚫 Ignored | By default, the development web server points to itself at `HOST` (see above). You may use this variable to specify a different host, e. g. when running it in the container.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| PORT                    |   ✅ Used   | 🚫 Ignored | By default, the development web server will attempt to listen on port 3000 or prompt you to attempt the next available port. You may use this variable to specify a different port.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| PUBLIC_ORIGIN           |   ✅ Used   | 🚫 Ignored | By default, the development web server assumes the backend is visible at any hostnames on the device (`localhost`, LAN network address, etc.) via `http` scheme at default port. You may use this variable to specify a different origin to fix CORS errors, e. g. when using virtual hosts or running the app in the container.                                                                                                                                                                                                                                                                                                                                         |
+| PUBLIC_URL              |   ✅ Used   |  ✅ Used   | Create React App assumes your application is hosted at the serving web server's root. You may use this variable to force assets to be referenced verbatim to the url you provide (hostname included).                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| GENERATE_SOURCEMAP      | 🚫 Ignored  |  ✅ Used   | When set to `false`, source maps are not generated for a production build. This solves out of memory (OOM) issues on some smaller machines.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+
+See https://create-react-app.dev/docs/advanced-configuration/ for more configuration options.
 
 
 Docker development
