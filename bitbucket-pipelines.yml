@@ -98,7 +98,7 @@ pipelines:
                     libxml2-dev libxpm-dev libzip-dev zlib-dev
                 fi
             - echo 'memory_limit = -1' > /usr/local/etc/php/conf.d/zz-custom.ini
-            - curl -sS https://getcomposer.org/installer | php
+            - curl -sS https://getcomposer.org/installer | php -- --2.2
 
             - SSH_PRIVATE_KEY_FILE=docker/php/id_rsa
             - *LOAD_SSH_KEY
