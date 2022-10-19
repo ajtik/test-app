@@ -23,5 +23,6 @@ config/local.neon
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.idea/
 
 bin/objednavky
