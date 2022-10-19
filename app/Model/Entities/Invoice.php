@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Netvor\Invoice\Model\Entities;
 
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use InvalidArgumentException;
-use Nette\Utils\Validators;
+use Money\Money;
 
 
 #[ORM\Entity]
@@ -23,8 +24,8 @@ class Invoice
 	#[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
 	private Client $client;
 
-	#[ORM\Column(type: Types::DECIMAL, precision: 12, scale: 2)]
-	private string $amount;
+	#[ORM\Column(type: Types::STRING)]
+	private int $amount;
 
 	#[ORM\Column(
 		type: Types::DATETIME_IMMUTABLE,
@@ -38,16 +39,20 @@ class Invoice
 	#[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
 	private ?DateTimeImmutable $dueDate;
 
+	/** @var Collection<int, Payment> */
+	#[ORM\OneToMany(mappedBy: 'invoice', targetEntity: Payment::class, fetch: 'EAGER')]
+	private Collection $payments;
+
 
 	public function __construct(
 		Client $client,
-		string $amount,
+		Money $amount,
 		DateTimeImmutable $issueDate,
 		?DateTimeImmutable $dueDate = null,
-	)
-	{
-		$this->setAmount($amount);
+	) {
+		$this->payments = new ArrayCollection;
 
+		$this->setAmount($amount);
 		$this->client = $client;
 		$this->issueDate = $issueDate;
 		$this->dueDate = $dueDate;
@@ -72,19 +77,16 @@ class Invoice
 	}
 
 
-	public function getAmount(): string
+	public function getAmount(): Money
 	{
-		return $this->amount;
+		// TODO: currency
+		return Money::CZK($this->amount);
 	}
 
 
-	public function setAmount(string $amount): self
+	public function setAmount(Money $amount): self
 	{
-		if (Validators::isNumeric($amount) === false) {
-			throw new InvalidArgumentException;
-		}
-
-		$this->amount = $amount;
+		$this->amount = (int) $amount->getAmount();
 		return $this;
 	}
 
@@ -111,6 +113,55 @@ class Invoice
 	public function setIssueDate(DateTimeImmutable $issueDate): self
 	{
 		$this->issueDate = $issueDate;
+		return $this;
+	}
+
+
+	public function getPaidAmount(): int
+	{
+		$paidAmount = 0;
+
+		foreach ($this->payments as $payment) {
+			$paidAmount += (int) $payment->getAmount()->getAmount();
+		}
+
+		return $paidAmount;
+	}
+
+
+	public function getUnpaidAmount(): int
+	{
+		$unpaidAmount = $this->amount;
+
+		foreach ($this->payments as $payment) {
+			$unpaidAmount -= (int) $payment->getAmount()->getAmount();
+		}
+
+		return $unpaidAmount;
+	}
+
+
+	/** @return Payment[] */
+	public function getPayments(): array
+	{
+		return $this->payments->toArray();
+	}
+
+
+	/** @param Payment[] $payments */
+	public function setPayments(array $payments): self
+	{
+		$this->payments = new ArrayCollection($payments);
+
+		return $this;
+	}
+
+
+	public function addPayment(Payment $payment): self
+	{
+		$payment->setInvoice($this);
+		$this->payments[] = $payment;
+
 		return $this;
 	}
 }

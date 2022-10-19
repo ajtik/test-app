@@ -67,6 +67,9 @@ services:
 	- Netvor\Invoice\Model\ClientService
 	- Netvor\Invoice\Model\InvoiceService
 
+	# FORMS
+	- Netvor\Invoice\Form\InvoiceForm\InvoiceFormFactory
+
 	- Netvor\Invoice\Router\RouterFactory::createRouter
 
 

@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Netvor\Invoice\Presenters;
 
-use DateTimeImmutable;
-use Nette;
 use Nette\Application\AbortException;
 use Nette\Application\UI;
-use Nette\Application\UI\InvalidLinkException;
+use Netvor\Invoice\Form\InvoiceForm\InvoiceForm;
+use Netvor\Invoice\Form\InvoiceForm\InvoiceFormFactory;
 use Netvor\Invoice\Model\ClientService;
 use Netvor\Invoice\Model\Entities\Client;
+use Netvor\Invoice\Model\Entities\Invoice;
 use Netvor\Invoice\Model\InvoiceService;
-use stdClass;
 
 /**
  * @property-read UI\Template $template
@@ -20,11 +19,13 @@ use stdClass;
 final class ClientPresenter extends UI\Presenter
 {
 	private Client $client;
+	private ?Invoice $invoice = null;
 
 	// constructor injection better
 	public function __construct(
 		private ClientService $model,
 		private InvoiceService $invoiceModel,
+		private InvoiceFormFactory $invoiceFormFactory,
 	) {
 		parent::__construct();
 	}
@@ -40,7 +41,6 @@ final class ClientPresenter extends UI\Presenter
 		if ($client === null) {
 			$this->flashMessage('Klient nebyl nalezen.', 'danger');
 			$this->redirect('Homepage:');
-			return; // to be sure
 		}
 
 		$this->client = $client;
@@ -51,103 +51,48 @@ final class ClientPresenter extends UI\Presenter
 	{
 		$this->template->client = $this->client;
 		$this->template->invoices = $this->invoiceModel->getAllByClient($this->client);
-
-		// now we have correct data type
-		/** @var UI\Form $invoiceForm */
-		$invoiceForm = $this['invoiceForm'];
-		$invoiceForm->setDefaults([
-			'issueDate' => date('Y-m-d'),
-			'dueDate' => date('Y-m-d'),
-		]);
 	}
 
 
-	protected function createComponentInvoiceForm(): UI\Form
+	/**
+	 * @throws AbortException
+	 */
+	public function handleAddPayment(int $invoiceId): void
 	{
-		// TODO: translate
-		$form = new UI\Form;
-		$form->addProtection('Vaše relace vypršela. Vraťte se na domovskou stránku a zkuste to znovu.');
+		$invoice = $this->invoiceModel->get($invoiceId);
 
-		$form->addText('amount')
-			->setRequired('Zadejte prosím částku.')
-			->addRule(UI\Form::NUMERIC, 'Zadejte prosím číslo.');
+		if ($invoice === null) {
+			$this->flashMessage('Faktura s tímto ID neexistuje.', 'success');
+			$this->redirect('this');
+		}
 
-		$form->addText('issueDate')
-			->setHtmlType('date')
-			->setRequired('Zvolte prosím datum vytavení');
+		$this->invoice = $invoice;
+		$this->redrawControl('invoiceFormSnippet');
+	}
 
-		$form->addText('dueDate')
-			->setHtmlType('date')
-			->setRequired('Zvolte prosím datum splatnosti');
 
-		$form->addSubmit('submit');
+	public function createComponentInvoiceForm(): InvoiceForm
+	{
+		$invoiceFormComponent = $this->invoiceFormFactory->create($this->client, $this->invoice);
 
-		$form->onSuccess[] = [$this, 'invoiceFormSucceeded'];
-		$form->onValidate[] = [$this, 'invoiceFormValidate'];
-		$form->onError[] = function (): void {
-			if ($this->isAjax()) {
-				$this->redrawControl('invoiceForm');
-			}
+		/** @var UI\Form $invoiceForm */
+		$invoiceForm = $invoiceFormComponent->getComponent('invoiceForm');
+		$invoiceForm->onValidate[] = fn () => $this->redrawControl('invoicesTable');
+		$invoiceForm->onSuccess[] = function (): void {
+			$this->payload->postGet = true;
+			$this->payload->url = $this->link('this');
+			$this->redrawControl('invoicesTable');
 		};
 
-		return $form;
-	}
+		/** @var UI\Form $paymentForm */
+		$paymentForm = $invoiceFormComponent->getComponent('paymentForm');
+		$paymentForm->onSuccess[] = function () use($invoiceFormComponent): void {
+			$this->payload->postGet = true;
+			$this->payload->url = $this->link('this');
+			$this->redrawControl('invoicesTable');
+			$this->redrawControl('invoiceFormSnippet');
+		};
 
-
-	/**
-	 * @throws InvalidLinkException
-	 * @throws AbortException
-	 */
-	public function invoiceFormValidate(UI\Form $form, stdClass $data): void
-	{
-		$issueDate = DateTimeImmutable::createFromFormat('Y-m-d', $data->issueDate);
-
-		if ($issueDate === false) {
-			/** @var Nette\Forms\Controls\TextInput $issueDateInput */
-			$issueDateInput = $form['issueDate'];
-			$issueDateInput->addError('Zadejte prosím platné datum.');
-		}
-
-		$dueDate = DateTimeImmutable::createFromFormat('Y-m-d', $data->issueDate);
-
-		if ($dueDate === false) {
-			/** @var Nette\Forms\Controls\TextInput $dueDate */
-			$dueDateInput = $form['dueDate'];
-			$dueDateInput->addError('Zadejte prosím platné datum.');
-		}
-
-		// clear, not exactly necessary
-		unset($issueDate, $dueDate);
-
-		if ($this->isAjax() === false) {
-			$this->redirect('this');
-			return;
-		}
-
-		$this->redrawControl('invoiceForm');
-		$this->redrawControl('invoicesTable');
-	}
-
-
-	/**
-	 * @throws InvalidLinkException
-	 * @throws AbortException
-	 */
-	public function invoiceFormSucceeded(UI\Form $form, stdClass $data): void
-	{
-		$issueDate = DateTimeImmutable::createFromFormat('Y-m-d', $data->issueDate);
-		$dueDate = DateTimeImmutable::createFromFormat('Y-m-d', $data->dueDate);
-
-		$this->invoiceModel->create($this->client, $data->amount, $issueDate, $dueDate);
-
-		if ($this->isAjax() === false) {
-			$this->redirect('this');
-		}
-
-		$form->reset();
-		$this->payload->postGet = true;
-		$this->payload->url = $this->link('this');
-		$this->redrawControl('invoiceForm');
-		$this->redrawControl('invoicesTable');
+		return $invoiceFormComponent;
 	}
 }

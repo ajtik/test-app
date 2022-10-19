@@ -1,0 +1,45 @@
+{import ../../Presenters/templates/@commonBlocks.latte}
+
+{varType ?Netvor\Invoice\Model\Entities\Invoice $invoice}
+
+{if $invoice === null} {* We have no invoice yet, then create one. *}
+	<h2>Nová faktura</h2>
+	<div n:snippet="invoiceForm">
+		<form n:name="invoiceForm" class="ajax">
+			{include formErrors form => $form}
+			<div class="row g-3 mb-3">
+				<div class="col-auto">
+					<label n:name="amount" class="form-label">Částka</label>
+					<input n:name="amount" class="form-control">
+					{include inputErrors input => $form[amount]}
+				</div>
+				<div class="col-auto">
+					<label n:name="issueDate" class="form-label">Datum vystavení</label>
+					<input n:name="issueDate" class="form-control">
+					{include inputErrors input => $form[issueDate]}
+				</div>
+				<div class="col-auto">
+					<label n:name="dueDate" class="form-label">Datum splatnosti</label>
+					<input n:name="dueDate" class="form-control">
+					{include inputErrors input => $form[dueDate]}
+				</div>
+			</div>
+			<button n:name="submit" class="btn btn-primary">Přidat novou fakturu</button>
+		</form>
+	</div>
+{else} {* We have invoice, add payment if wanted. *}
+	<h2>Přidat platbu k faktuře {$invoice->getId()}</h2>
+	<div n:snippet="paymentForm">
+		<form n:name="paymentForm" class="ajax">
+			{include formErrors form => $form}
+			<div class="row g-3 mb-3">
+				<div class="col-auto">
+					<label n:name="amount" class="form-label">Částka</label>
+					<input n:name="amount" class="form-control">
+					{include inputErrors input => $form[amount]}
+				</div>
+			</div>
+			<button n:name="submit" class="btn btn-primary">Přidat platbu</button>
+		</form>
+	</div>
+{/if}

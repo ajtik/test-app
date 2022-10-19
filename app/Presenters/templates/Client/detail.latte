@@ -8,30 +8,9 @@
 <h1 n:inner-block="title">Faktury klienta {$client->getFirstName()} {$client->getLastName()} ({$client->getIc()})</h1>
 <hr>
 
-<h2>Nová faktura</h2>
-<div n:snippet="invoiceForm">
-	<form n:name="invoiceForm" class="ajax">
-		{include formErrors form => $form}
-		<div class="row g-3 mb-3">
-			<div class="col-auto">
-				<label n:name="amount" class="form-label">Částka</label>
-				<input n:name="amount" class="form-control">
-				{include inputErrors input => $form[amount]}
-			</div>
-			<div class="col-auto">
-				<label n:name="issueDate" class="form-label">Datum vystavení</label>
-				<input n:name="issueDate" class="form-control">
-				{include inputErrors input => $form[issueDate]}
-			</div>
-			<div class="col-auto">
-				<label n:name="dueDate" class="form-label">Datum splatnosti</label>
-				<input n:name="dueDate" class="form-control">
-				{include inputErrors input => $form[dueDate]}
-			</div>
-		</div>
-		<button n:name="submit" class="btn btn-primary">Přidat novou fakturu</button>
-	</form>
-</div>
+{snippet invoiceFormSnippet}
+	{control invoiceForm}
+{/snippet}
 
 <hr>
 
@@ -41,11 +20,12 @@
 			<th>Částka</th>
 			<th>Datum vystavení</th>
 			<th>Datum splatnosti</th>
+			<th>Akce</th>
 		</tr>
 	</thead>
 	<tbody n:snippet="invoicesTable">
 		<tr n:foreach="$invoices as $invoice">
-			<td>{$invoice->getAmount()|number:2, ',', ' '}&nbsp;Kč</td>
+			<td>{$invoice->getAmount()->getAmount() / 100|number:2, ',', ' '}&nbsp;Kč</td>
 			<td>{$invoice->getIssueDate()|date:'j. n. Y'}</td>
 			<td>
 				{if $invoice->getDueDate() !== null}
@@ -53,6 +33,9 @@
 				{else}
 					-
 				{/if}
+			</td>
+			<td>
+				<a class="btn btn-danger ajax" n:href="addPayment! $invoice->getId()">Přidat platbu</a>
 			</td>
 		</tr>
 	</tbody>

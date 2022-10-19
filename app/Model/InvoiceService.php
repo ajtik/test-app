@@ -8,8 +8,10 @@ use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectRepository;
+use Money\Money;
 use Nette;
 use Netvor\Invoice\Mails\MailService;
+use Netvor\Invoice\Model\Entities\Payment;
 
 
 class InvoiceService
@@ -51,9 +53,16 @@ class InvoiceService
 	}
 
 
+	public function addPayment(Payment $payment): void
+	{
+		$this->entityManager->persist($payment);
+		$this->entityManager->flush();
+	}
+
+
 	public function create(
 		Entities\Client $client,
-		string $amount,
+		Money $amount,
 		DateTimeImmutable $issueDate,
 		DateTimeImmutable $dueDate,
 	): Entities\Invoice {
