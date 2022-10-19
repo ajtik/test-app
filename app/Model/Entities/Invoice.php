@@ -4,46 +4,53 @@ declare(strict_types=1);
 
 namespace Netvor\Invoice\Model\Entities;
 
+use DateTimeImmutable;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Nette;
+use InvalidArgumentException;
+use Nette\Utils\Validators;
 
 
-/**
- * @ORM\Entity
- * @property-read ?int $id
- * @property-read Client $client
- * @property-read string $amount
- * @property-read Nette\Utils\DateTime $issueDate
- */
+#[ORM\Entity]
 class Invoice
 {
-	use Nette\SmartObject;
-
-	/**
-	 * @ORM\Column(type="integer")
-	 * @ORM\Id
-	 * @ORM\GeneratedValue
-	 */
+	#[ORM\Column(type: Types::INTEGER)]
+	#[ORM\Id]
+	#[ORM\GeneratedValue]
 	private ?int $id = null;
 
-	/**
-	 * @ORM\ManyToOne(targetEntity="Client")
-	 * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-	 */
+	#[ORM\ManyToOne(targetEntity: Client::class)]
+	#[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
 	private Client $client;
 
-	/** @ORM\Column(type="decimal", precision=12, scale=2) */
+	#[ORM\Column(type: Types::DECIMAL, precision: 12, scale: 2)]
 	private string $amount;
 
-	/** @ORM\Column(type="datetime", options={"default": "CURRENT_TIMESTAMP"}) */
-	private \DateTime $issueDate;
+	#[ORM\Column(
+		type: Types::DATETIME_IMMUTABLE,
+		options: ['default' => 'CURRENT_TIMESTAMP'],
+	)]
+	private DateTimeImmutable $issueDate;
+
+	// must be nullable, because we can already have some data in db if already in production
+	// and that would end-up with error, since current rows have no default value
+	// some different strategy can be used, just to be sure for this case, where we already have data
+	#[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+	private ?DateTimeImmutable $dueDate;
 
 
-	public function __construct(Client $client, string $amount, \DateTime $issueDate)
+	public function __construct(
+		Client $client,
+		string $amount,
+		DateTimeImmutable $issueDate,
+		?DateTimeImmutable $dueDate = null,
+	)
 	{
-		$this->client = $client;
 		$this->setAmount($amount);
-		$this->setIssueDate($issueDate);
+
+		$this->client = $client;
+		$this->issueDate = $issueDate;
+		$this->dueDate = $dueDate;
 	}
 
 
@@ -71,13 +78,10 @@ class Invoice
 	}
 
 
-	/**
-	 * @return $this
-	 */
 	public function setAmount(string $amount): self
 	{
-		if (!Nette\Utils\Validators::isNumeric($amount)) {
-			throw new \InvalidArgumentException;
+		if (Validators::isNumeric($amount) === false) {
+			throw new InvalidArgumentException;
 		}
 
 		$this->amount = $amount;
@@ -85,18 +89,28 @@ class Invoice
 	}
 
 
-	public function getIssueDate(): Nette\Utils\DateTime
+	public function getDueDate(): ?DateTimeImmutable
 	{
-		return Nette\Utils\DateTime::from($this->issueDate);
+		return $this->dueDate;
 	}
 
 
-	/**
-	 * @return $this
-	 */
-	public function setIssueDate(\DateTime $issueDate): self
+	public function setDueDate(?DateTimeImmutable $dueDate): self
 	{
-		$this->issueDate = Nette\Utils\DateTime::from($issueDate);
+		$this->dueDate = $dueDate;
+		return $this;
+	}
+
+
+	public function getIssueDate(): DateTimeImmutable
+	{
+		return $this->issueDate;
+	}
+
+
+	public function setIssueDate(DateTimeImmutable $issueDate): self
+	{
+		$this->issueDate = $issueDate;
 		return $this;
 	}
 }

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Netvor\Invoice\Model;
 
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Nette;
 use Netvor\Invoice\Mails\MailService;
 
@@ -16,8 +18,9 @@ class InvoiceService
 
 	private EntityManagerInterface $entityManager;
 
+	// interface better
 	/** @var EntityRepository<Entities\Invoice> */
-	private EntityRepository $repository;
+	private ObjectRepository $repository;
 
 	private MailService $mailService;
 
@@ -48,9 +51,15 @@ class InvoiceService
 	}
 
 
-	public function create(Entities\Client $client, string $amount, \DateTime $issueDate): Entities\Invoice
-	{
-		$invoice = new Entities\Invoice($client, $amount, $issueDate);
+	public function create(
+		Entities\Client $client,
+		string $amount,
+		DateTimeImmutable $issueDate,
+		DateTimeImmutable $dueDate,
+	): Entities\Invoice {
+		// this method should be split into its own class, since this class has multiple purposes cuz of this method
+		// leave it out like this for now
+		$invoice = new Entities\Invoice($client, $amount, $issueDate, $dueDate);
 
 		$this->entityManager->persist($invoice);
 		$this->entityManager->flush();

@@ -69,12 +69,12 @@
 	</thead>
 	<tbody n:snippet="clientsTable">
 		<tr n:foreach="$clients as $client">
-			<td>{$client->ic}</td>
-			<td><a href="mailto:{$client->email}">{$client->email}</a></td>
-			<td>{$client->firstName} {$client->lastName}</td>
-			<td>{[$client->street, $client->city, $client->postalCode]|join:', '}</td>
+			<td>{$client->getIc()}</td>
+			<td><a href="mailto:{$client->getEmail()}">{$client->getEmail()}</a></td>
+			<td>{$client->getFirstName()} {$client->getLastName()}</td>
+			<td>{[$client->getStreet(), $client->getCity(), $client->getPostalCode()]|join:', '}</td>
 			<td>
-				<a n:href="ClientDetail: $client->id" class="btn btn-primary">Detail</a>
+				<a n:href="Client:detail $client->getId()" class="btn btn-primary">Detail</a>
 			</td>
 		</tr>
 	</tbody>

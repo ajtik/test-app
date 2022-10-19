@@ -5,7 +5,7 @@
 
 {block content}
 
-<h1 n:inner-block="title">Faktury klienta {$client->firstName} {$client->lastName} ({$client->ic})</h1>
+<h1 n:inner-block="title">Faktury klienta {$client->getFirstName()} {$client->getLastName()} ({$client->getIc()})</h1>
 <hr>
 
 <h2>Nová faktura</h2>
@@ -23,6 +23,11 @@
 				<input n:name="issueDate" class="form-control">
 				{include inputErrors input => $form[issueDate]}
 			</div>
+			<div class="col-auto">
+				<label n:name="dueDate" class="form-label">Datum splatnosti</label>
+				<input n:name="dueDate" class="form-control">
+				{include inputErrors input => $form[dueDate]}
+			</div>
 		</div>
 		<button n:name="submit" class="btn btn-primary">Přidat novou fakturu</button>
 	</form>
@@ -35,12 +40,20 @@
 		<tr>
 			<th>Částka</th>
 			<th>Datum vystavení</th>
+			<th>Datum splatnosti</th>
 		</tr>
 	</thead>
 	<tbody n:snippet="invoicesTable">
 		<tr n:foreach="$invoices as $invoice">
-			<td>{$invoice->amount|number:2, ',', ' '}&nbsp;Kč</td>
-			<td>{$invoice->issueDate|date:'j. n. Y'}</td>
+			<td>{$invoice->getAmount()|number:2, ',', ' '}&nbsp;Kč</td>
+			<td>{$invoice->getIssueDate()|date:'j. n. Y'}</td>
+			<td>
+				{if $invoice->getDueDate() !== null}
+					{$invoice->getDueDate()|date:'j. n. Y'}
+				{else}
+					-
+				{/if}
+			</td>
 		</tr>
 	</tbody>
 </table>
