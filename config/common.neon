@@ -30,7 +30,7 @@ di:
 nettrine.dbal:
 	connection:
 		driver: pdo_mysql
-		host: 127.0.0.1
+		host: mysql # could not connect through command line, may be some config include priority problem
 		dbname: invoice-test-app
 		charset: utf8
 		user:
