@@ -7,7 +7,6 @@ namespace Netvor\Invoice\Presenters;
 use Nette;
 use Nette\Application\UI;
 use Netvor\Invoice\Model\ClientService;
-use Netvor\Invoice\Model\IRegistrySubjectFinder;
 use Netvor\Invoice\Model\Structures\ClientData;
 
 
