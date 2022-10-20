@@ -5,5 +5,5 @@
 {block title}Nová faktura{/block}
 
 {block content}
-<p>Částka: {$invoice->amount|number:2, ',', ' '}&nbsp;Kč</p>
-<p>Datum vystavení: {$invoice->issueDate|date:'j. n. Y'}</p>
+<p>Částka: {$invoice->getAmount()->getAmount() / 100|number:2, ',', ' '}&nbsp;Kč</p>
+<p>Datum vystavení: {$invoice->getIssueDate()|date:'j. n. Y'}</p>

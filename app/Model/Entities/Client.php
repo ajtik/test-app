@@ -4,56 +4,44 @@ declare(strict_types=1);
 
 namespace Netvor\Invoice\Model\Entities;
 
+use DateTimeImmutable;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Nette;
 
-
-/**
- * @ORM\Entity
- * @property-read ?int $id
- * @property-read string $ic
- * @property-read string $email
- * @property-read string $firstName
- * @property-read string $lastName
- * @property-read string $street
- * @property-read string $city
- * @property-read string $postalCode
- * @property-read Nette\Utils\DateTime $createdAt
- */
+#[ORM\Entity]
 class Client
 {
-	use Nette\SmartObject;
-
-	/**
-	 * @ORM\Column(type="integer")
-	 * @ORM\Id
-	 * @ORM\GeneratedValue
-	 */
+	#[ORM\Column(type: Types::INTEGER)]
+	#[ORM\Id]
+	#[ORM\GeneratedValue]
 	private ?int $id = null;
 
-	/** @ORM\Column */
+	#[ORM\Column]
 	private string $ic;
 
-	/** @ORM\Column(unique=true) */
+	#[ORM\Column(unique: true)]
 	private string $email;
 
-	/** @ORM\Column */
+	#[ORM\Column]
 	private string $firstName;
 
-	/** @ORM\Column */
+	#[ORM\Column]
 	private string $lastName;
 
-	/** @ORM\Column */
+	#[ORM\Column]
 	private string $street;
 
-	/** @ORM\Column */
+	#[ORM\Column]
 	private string $city;
 
-	/** @ORM\Column */
+	#[ORM\Column]
 	private string $postalCode;
 
-	/** @ORM\Column(type="datetime", options={"default": "CURRENT_TIMESTAMP"}) */
-	private \DateTime $createdAt;
+	#[ORM\Column(
+		type: Types::DATETIME_IMMUTABLE,
+		options: ['default' => 'CURRENT_TIMESTAMP'],
+	)]
+	private DateTimeImmutable $createdAt;
 
 
 	public function __construct(
@@ -73,7 +61,7 @@ class Client
 		$this->setCity($city);
 		$this->setPostalCode($postalCode);
 
-		$this->createdAt = new Nette\Utils\DateTime;
+		$this->createdAt = new DateTimeImmutable;
 	}
 
 
@@ -95,9 +83,6 @@ class Client
 	}
 
 
-	/**
-	 * @return $this
-	 */
 	public function setIc(string $ic): self
 	{
 		$this->ic = $ic;
@@ -124,9 +109,6 @@ class Client
 	}
 
 
-	/**
-	 * @return $this
-	 */
 	public function setFirstName(string $firstName): self
 	{
 		$this->firstName = $firstName;
@@ -140,9 +122,6 @@ class Client
 	}
 
 
-	/**
-	 * @return $this
-	 */
 	public function setLastName(string $lastName): self
 	{
 		$this->lastName = $lastName;
@@ -169,9 +148,6 @@ class Client
 	}
 
 
-	/**
-	 * @return $this
-	 */
 	public function setCity(string $city): self
 	{
 		$this->city = $city;
@@ -185,9 +161,6 @@ class Client
 	}
 
 
-	/**
-	 * @return $this
-	 */
 	public function setPostalCode(string $postalCode): self
 	{
 		$this->postalCode = $postalCode;
@@ -195,8 +168,8 @@ class Client
 	}
 
 
-	public function getCreatedAt(): Nette\Utils\DateTime
+	public function getCreatedAt(): DateTimeImmutable
 	{
-		return Nette\Utils\DateTime::from($this->createdAt);
+		return $this->createdAt;
 	}
 }

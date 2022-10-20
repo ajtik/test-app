@@ -1,0 +1,50 @@
+{import ../@commonBlocks.latte}
+
+{varType Netvor\Invoice\Model\Entities\Client $client}
+{varType Netvor\Invoice\Model\Entities\Invoice[] $invoices}
+
+{block content}
+
+<h1 n:inner-block="title">Faktury klienta {$client->getFirstName()} {$client->getLastName()} ({$client->getIc()})</h1>
+<hr>
+
+{snippet invoiceFormSnippet}
+	{control invoiceForm}
+{/snippet}
+
+<hr>
+
+{snippet showUnpaid}
+	<a class="ajax" n:href="showUnpaid! !$showUnpaid">{if $showUnpaid === true}Zobrazit všechny{else}Zobrazit nezaplacené{/if}</a>
+{/snippet}
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Částka</th>
+			<th>Zaplaceno</th>
+			<th>Datum vystavení</th>
+			<th>Datum splatnosti</th>
+			<th>Akce</th>
+		</tr>
+	</thead>
+	<tbody n:snippet="invoicesTable">
+		<tr n:foreach="$invoices as $invoice">
+			<td>{$invoice->getAmount()->getAmount() / 100|number:2, ',', ' '}&nbsp;Kč</td>
+			<td>{$invoice->getPaidAmount() / 100|number:2, ',', ' '}&nbsp;Kč</td>
+			<td>{$invoice->getIssueDate()|date:'j. n. Y'}</td>
+			<td>
+				{if $invoice->getDueDate() !== null}
+					{$invoice->getDueDate()|date:'j. n. Y'}
+				{else}
+					-
+				{/if}
+			</td>
+			<td>
+				{if (int)$invoice->getAmount()->getAmount() !== $invoice->getPaidAmount()}
+					<a class="btn btn-danger ajax" n:href="addPayment! $invoice->getId()">Přidat platbu</a>
+				{/if}
+			</td>
+		</tr>
+	</tbody>
+</table>

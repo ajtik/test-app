@@ -9,7 +9,7 @@ extensions:
 	nettrine.cache: Nettrine\Cache\DI\CacheExtension
 	nettrine.dbal: Nettrine\DBAL\DI\DbalExtension
 	nettrine.orm: Nettrine\ORM\DI\OrmExtension
-	nettrine.orm.annotations: Nettrine\ORM\DI\OrmAnnotationsExtension
+	nettrine.orm.attributes: Nettrine\ORM\DI\OrmAttributesExtension
 	nettrine.orm.cache: Nettrine\ORM\DI\OrmCacheExtension
 	webpack: Contributte\Webpack\DI\WebpackExtension(%debugMode%, %consoleMode%)
 
@@ -30,7 +30,7 @@ di:
 nettrine.dbal:
 	connection:
 		driver: pdo_mysql
-		host: 127.0.0.1
+		host: mysql # could not connect through command line, may be some config include priority problem
 		dbname: invoice-test-app
 		charset: utf8
 		user:
@@ -41,11 +41,9 @@ nettrine.dbal:
 	debug:
 		panel: %debugMode%
 
-
-nettrine.orm.annotations:
-	mapping:
-		Netvor\Invoice: %appDir%
-
+nettrine.orm.attributes:
+  mapping:
+  	Netvor\Invoice: %appDir%
 
 session:
 	autoStart: always
@@ -68,6 +66,10 @@ services:
 	- Netvor\Invoice\Mails\MailService(templateDir: %email.templateDir%, defaultFromEmail: %email.from%)
 	- Netvor\Invoice\Model\ClientService
 	- Netvor\Invoice\Model\InvoiceService
+	- Netvor\Invoice\Model\ARESRegistrySubjectFinder
+
+	# FORMS
+	- Netvor\Invoice\Form\InvoiceForm\InvoiceFormFactory
 
 	- Netvor\Invoice\Router\RouterFactory::createRouter
 
