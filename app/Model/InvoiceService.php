@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Netvor\Invoice\Model;
 
+use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -11,6 +12,8 @@ use Doctrine\Persistence\ObjectRepository;
 use Money\Money;
 use Nette;
 use Netvor\Invoice\Mails\MailService;
+use Netvor\Invoice\Model\Entities\Client;
+use Netvor\Invoice\Model\Entities\Invoice;
 use Netvor\Invoice\Model\Entities\Payment;
 
 
@@ -39,6 +42,40 @@ class InvoiceService
 	public function get(int $id): ?Entities\Invoice
 	{
 		return $this->repository->find($id);
+	}
+
+
+	/**
+	 * @return Invoice[]
+	 */
+	public function findUnpaidInvoicesByClient(Client $client): array
+	{
+		$sumPaymentQuery = $this->entityManager->createQueryBuilder();
+		$sumPaymentQuery->select('SUM(p1.amount)')
+			->from(Payment::class, 'p1')
+			->where($sumPaymentQuery->expr()->eq('p1.invoice', 'i'));
+
+		$countPaymentQuery = $this->entityManager->createQueryBuilder();
+		$countPaymentQuery->select('COUNT(p2.amount)')
+			->from(Payment::class, 'p2')
+			->where($countPaymentQuery->expr()->eq('p2.invoice', 'i'));
+
+		$qb = $this->entityManager->createQueryBuilder();
+		$qb->select('i')
+			->from(Invoice::class, 'i')
+			->where('' . $qb->expr()->lte('i.dueDate', ':today'))
+			->andWhere($qb->expr()->eq('i.client', ':client') . '')
+			->andWhere(
+				$qb->expr()->orX(
+					$qb->expr()->lt('(' . $sumPaymentQuery->getDQL() . ')', 'i.amount'),
+					$qb->expr()->eq('(' . $countPaymentQuery->getDQL() . ')', 0),
+				),
+			);
+
+		$qb->setParameter('client', $client);
+		$qb->setParameter('today', new DateTime);
+
+		return $qb->getQuery()->getResult();
 	}
 
 

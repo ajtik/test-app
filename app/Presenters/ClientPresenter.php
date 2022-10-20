@@ -49,8 +49,30 @@ final class ClientPresenter extends UI\Presenter
 
 	public function renderDetail(): void
 	{
+		$showUnpaid = (bool) $this->getParameter('showUnpaid');
+
+		$this->template->showUnpaid = $showUnpaid;
 		$this->template->client = $this->client;
+
+		if ($showUnpaid === true) {
+			$this->template->invoices = $this->invoiceModel->findUnpaidInvoicesByClient($this->client);
+			return;
+		}
+
 		$this->template->invoices = $this->invoiceModel->getAllByClient($this->client);
+	}
+
+
+	public function handleShowUnpaid(bool $showUnpaid): void
+	{
+		$this->template->invoices = $showUnpaid === true
+			? $this->invoiceModel->findUnpaidInvoicesByClient($this->client)
+			: $this->invoiceModel->getAllByClient($this->client);
+
+		if ($this->isAjax() === true) {
+			$this->redrawControl('invoicesTable');
+			$this->redrawControl('showUnpaid');
+		}
 	}
 
 
@@ -86,7 +108,7 @@ final class ClientPresenter extends UI\Presenter
 
 		/** @var UI\Form $paymentForm */
 		$paymentForm = $invoiceFormComponent->getComponent('paymentForm');
-		$paymentForm->onSuccess[] = function () use($invoiceFormComponent): void {
+		$paymentForm->onSuccess[] = function (): void {
 			$this->payload->postGet = true;
 			$this->payload->url = $this->link('this');
 			$this->redrawControl('invoicesTable');

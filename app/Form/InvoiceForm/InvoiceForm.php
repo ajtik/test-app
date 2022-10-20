@@ -136,10 +136,7 @@ class InvoiceForm extends Control
 	}
 
 
-	/**
-	 * @throws AbortException
-	 */
-	protected function invoiceFormValidate(Form $form, stdClass $data): void
+	public function invoiceFormValidate(Form $form, stdClass $data): void
 	{
 		// TODO: translate
 		if (Validators::isNumeric($data->amount) === false) {
@@ -153,7 +150,7 @@ class InvoiceForm extends Control
 	/**
 	 * @throws AbortException
 	 */
-	protected function invoiceFormSuccess(Form $form, stdClass $data): void
+	public function invoiceFormSuccess(Form $form, stdClass $data): void
 	{
 		$issueDate = DateTimeImmutable::createFromFormat('Y-m-d', $data->issueDate);
 

@@ -7,13 +7,19 @@ namespace Netvor\Invoice\Presenters;
 use Nette;
 use Nette\Application\UI;
 use Netvor\Invoice\Model\ClientService;
+use Netvor\Invoice\Model\IRegistrySubjectFinder;
 use Netvor\Invoice\Model\Structures\ClientData;
 
 
 final class HomepagePresenter extends UI\Presenter
 {
-	/** @inject */
-	public ClientService $model;
+	// pass by interface, not by implementation
+	public function __construct(
+		private ClientService $model,
+//		private IRegistrySubjectFinder $subjectFinder,
+	) {
+		parent::__construct();
+	}
 
 
 	public function renderDefault(): void

@@ -66,6 +66,7 @@ services:
 	- Netvor\Invoice\Mails\MailService(templateDir: %email.templateDir%, defaultFromEmail: %email.from%)
 	- Netvor\Invoice\Model\ClientService
 	- Netvor\Invoice\Model\InvoiceService
+	- Netvor\Invoice\Model\ARESRegistrySubjectFinder
 
 	# FORMS
 	- Netvor\Invoice\Form\InvoiceForm\InvoiceFormFactory

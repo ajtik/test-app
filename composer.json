@@ -28,7 +28,8 @@
 		"tracy/tracy": "^2.9",
 		"contributte/webpack": "^2.1",
 		"nettrine/orm": "^0.8.3",
-		"moneyphp/money": "^3.3"
+		"moneyphp/money": "^3.3",
+		"contributte/guzzlette": "^3.2"
 	},
 	"require-dev": {
 		"ext-dom": "*",
